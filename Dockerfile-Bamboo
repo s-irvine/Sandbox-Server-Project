@@ -2,7 +2,7 @@ FROM ubuntu
 MAINTAINER Samuel Irvine
 
 USER root
-RUN apt-get update -y && apt-get install -y default-jdk nano
+RUN apt-get update -y && apt-get install -y default-jdk nano maven wget
 
 RUN echo "mysql-server mysql-server/root_password password root" | debconf-set-selections
 RUN echo "mysql-server mysql-server/root_password_again password root" | debconf-set-selections
@@ -13,10 +13,12 @@ RUN service mysql start && echo "CREATE DATABASE Bamboo character set utf8 colla
 RUN cp /usr/share/java/mysql-connector-java-5.1.38.jar lib/ext
 
 WORKDIR /opt
-ADD https://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-5.14.3.1.tar.gz .
+RUN wget https://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-5.14.3.1.tar.gz
 RUN tar -xvf atlassian-bamboo-5.14.3.1.tar.gz
 WORKDIR /home/bamboo/bamboo-home
 WORKDIR /opt/atlassian-bamboo-5.14.3.1
 RUN cp /usr/share/java/mysql-connector-java-5.1.38.jar lib
 RUN sed -i "3ibamboo.home= /home/bamboo/bamboo-home" atlassian-bamboo/WEB-INF/classes/bamboo-init.properties
 #RUN sed -i '50s/.*/            port="8084"/' conf/server.xml
+
+ENTRYPOINT service mysql start && /opt/atlassian-bamboo-5.14.3.1/bin/start-bamboo.sh && bash

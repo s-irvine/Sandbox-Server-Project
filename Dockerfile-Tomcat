@@ -1,0 +1,18 @@
+FROM ubuntu
+MAINTAINER Sam Irvine
+
+USER root
+RUN apt-get update -y && apt-get install -y wget nano maven default-jdk
+
+ENV JAVA_HOME /usr/lib/jvm/default-java
+
+RUN groupadd tomcat && useradd -s /bin/false -g tomcat -d /opt/tomcat tomcat
+
+WORKDIR /opt
+RUN wget http://apache.mirrors.nublue.co.uk/tomcat/tomcat-8/v8.5.9/bin/apache-tomcat-8.5.9.tar.gz
+RUN tar -xzvf apache-tomcat-8.5.9.tar.gz
+
+ENV CATALINA_HOME=/opt/apache-tomcat-8.5.9
+
+ENTRYPOINT /opt/apache-tomcat-8.5.9/bin/startup.sh && bash
+
