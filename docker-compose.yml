@@ -1,0 +1,11 @@
+version: '2'
+services:
+    bamboo:
+      
+      ports: 8085:8085
+    - name: tomcat
+      image: gcr.io/sandbox-server-project/tomcat
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8080
+          hostPort: 8080
